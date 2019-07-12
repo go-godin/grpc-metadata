@@ -14,6 +14,15 @@ const (
 	UserID    MetadataContextKey = "userId"
 )
 
+// GetMetadata is a convenience function which can be used in order to not have to import two metadata
+// libraries (grpc/metadata and go-godin/metadata)
+func GetMetadata(ctx context.Context) (metadata.MD, bool) {
+	if md, ok := metadata.FromIncomingContext(ctx); ok {
+		return md, true
+	}
+	return nil, false
+}
+
 // GetRequestID tries to extract the requestId key from the given context.
 func GetRequestID(ctx context.Context) string {
 	if md, ok := metadata.FromIncomingContext(ctx); ok {
