@@ -3,7 +3,6 @@ package grpc_metadata
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -16,10 +15,6 @@ const (
 )
 
 // GetRequestID tries to extract the requestId key from the given context.
-// If no requestId exists, a new UUID is generated.
-// Though, one should not rely on this function to ensure that a requestId exists.
-// The function does NOT adjust the context and will therefore only generate a temporary requestId which
-// is lost once the program exits the scope. It's better to use the RequestIDMiddleware to ensure that it exists.
 func GetRequestID(ctx context.Context) string {
 	if md, ok := metadata.FromIncomingContext(ctx); ok {
 		requestID := md.Get(string(RequestID))
@@ -27,7 +22,7 @@ func GetRequestID(ctx context.Context) string {
 			return requestID[0]
 		}
 	}
-	return uuid.New().String()
+	return ""
 }
 
 // GetAccountID tries to extract the accountId key from the given context.
