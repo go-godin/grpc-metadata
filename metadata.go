@@ -25,12 +25,21 @@ func GetMetadata(ctx context.Context) (metadata.MD, bool) {
 
 // GetRequestID tries to extract the requestId key from the given context.
 func GetRequestID(ctx context.Context) string {
+
+	// try and find it in grpc metadata
 	if md, ok := metadata.FromIncomingContext(ctx); ok {
 		requestID := md.Get(string(RequestID))
 		if len(requestID) > 0 {
 			return requestID[0]
 		}
 	}
+
+	// requestId might also be in the context already (e.g. from an AMQP subscriber which does not have metadata)
+	requestId := ctx.Value(string(RequestID))
+	if requestId.(string) != "" {
+		return requestId.(string)
+	}
+
 	return ""
 }
 
